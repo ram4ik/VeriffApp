@@ -10,34 +10,38 @@ import XCTest
 
 class VeriffAppUITests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    let veriffApp = XCUIApplication(bundleIdentifier: "Veriff.Trial")
 
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    override func setUp() {
+        veriffApp.launch()
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    override func tearDown() {
+        veriffApp.terminate()
     }
-
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
-
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTOSSignpostMetric.applicationLaunch]) {
-                XCUIApplication().launch()
-            }
+    
+    func testVeriffApp() throws {
+        
+        print(veriffApp.description)
+        print(veriffApp.debugDescription)
+        
+        _ = veriffApp.wait(for: .runningForeground, timeout: 5)
+        
+        if veriffApp.staticTexts["Welcome to Veriff."].exists {
+            
+            let descriptionText = "The easiest, safest and most convenient way to verify yourself."
+            XCTAssert(veriffApp.staticTexts[descriptionText].exists)
+            
+            XCTAssert(veriffApp.textFields["Full name"].exists)
+            XCTAssert(veriffApp.textFields["Document country"].exists)
+            XCTAssert(veriffApp.textFields["Document type"].exists)
+            XCTAssert(veriffApp.textFields["Session language"].exists)
         }
+        
+        let tryVeriffButton = veriffApp.buttons["TRY VERIFF"]
+        if tryVeriffButton.exists {
+            tryVeriffButton.tap()
+        }
+        
     }
 }
